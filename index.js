@@ -8,6 +8,7 @@
 const words = 'APPLE';
 let index = 0;
 let attempts = 0;
+let answerKey = '';
 
 function appStart(){
 
@@ -32,25 +33,35 @@ function appStart(){
         index = 0;
     }
 
+    
+
     const handleEnterKey = () => {
 
         let correctNum = 0;
 
         for (let i = 0; i < 5; i++){
+
             const block = document.querySelector(
                 `.board-block[data-index='${attempts}${i}']`
             );
+
             const anwser = block.innerText;
             const word = words[i];
+
+            const keyBlock = document.querySelector(`.keyboard-block[data-key='${anwser}']`)
 
             if (anwser == word){
                 correctNum ++;
                 block.style.background = "#6AAA64";
+                keyBlock.style.background = "#6AAA64";
             }
             else if (words.includes(anwser)){
                 block.style.background = "#C9B458";
+                keyBlock.style.background = "#C9B458";
             }
-            else block.style.background = "#787C7E";
+            else{
+                block.style.background = "#787C7E";
+            }
 
             block.style.color = 'white';
         }
@@ -69,6 +80,31 @@ function appStart(){
         }
 
         if(index !==0) index -= 1;
+    }
+
+    const handleKeyboard = (e) => {
+        // let key = e.key.toUpperCase();
+        const thisBlock = document.querySelector(`.board-block[data-index='${attempts}${index}']`)
+        const keyBlock = e.target.innerText;
+        const checkClick = /^[A-Z]{1}$/; // 대문자 한글자만 허용하는 정규식
+
+        if (keyBlock === 'BACKSPACE') handleBackSpace();
+        else if (index === 5){
+            if (keyBlock === 'ENTER'){
+                console.log('클릭엔터');
+                handleEnterKey();
+            }
+        }
+
+        if (checkClick.test(keyBlock)){
+            thisBlock.innerText = keyBlock;
+            index++;
+        }
+        else{
+            return;
+        }
+
+        console.log(keyBlock);
     }
 
     const handleKeyDown = (e) => {
@@ -109,11 +145,11 @@ function appStart(){
         }
         
         timer = setInterval(setTime, 1000);
-        console.log(timer)
     }
 
     startTimer();
     window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('click',handleKeyboard);
 }
 
 appStart();
